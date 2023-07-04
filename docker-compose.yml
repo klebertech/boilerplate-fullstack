@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+      - 3000:3000
+    platform: linux/x86_64
+    working_dir: /frontend
+    command: dev
+    volumes:
+      - ./frontend:/frontend
+
+  backend:
+    container_name: backend
+    build: ./backend
+    ports:
+      - 3001:3001
+    platform: linux/x86_64
+    working_dir: /backend
+    command: dev
+    volumes:
+      - ./backend:/backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DB_USER=root
+      - DB_PASS=123456
+      - DB_HOST=db
+      - DB_PORT=3306
+
+  db:
+    container_name: db
+    image: mysql:8.0.21
+    platform: linux/x86_64
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
